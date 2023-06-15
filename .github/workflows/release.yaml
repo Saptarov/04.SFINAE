@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - uses: Saptarov/doxygen-github-pages-action@v1
+      - uses: Saptarov/04.SFINAE@v1
         with:
           submodules: true
       - run: sudo apt-get update
