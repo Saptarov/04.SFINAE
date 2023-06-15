@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
-      - uses: Saptarov/04.SFINAE@v1
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - run: sudo apt-get update
