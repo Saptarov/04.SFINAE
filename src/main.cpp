@@ -3,29 +3,16 @@
 template<typename T>
 typename std::enable_if_t<std::is_integral_v<T>, void>
 print_ip(T v) {
-    if constexpr(sizeof(T) == 1) {
-        uint8_t* byte = (uint8_t*)&v;
-        std::cout << (int)*byte << std::endl;
-    }
-    else if constexpr(sizeof(T) == 2) {
-        uint8_t* byte = (uint8_t*)&v;
-        std::cout << (int)byte[1] << "." << (int)byte[0] << std::endl;
-    }
-    else if constexpr(sizeof(T) == 4) {
-        uint8_t* byte = (uint8_t*)&v;
-        std::cout << (int)byte[3] << "." << (int)byte[2] << "." << (int)byte[1] << "." << (int)byte[0] << std::endl;
-    }
-    else if constexpr(sizeof(T) == 8) {
-        uint8_t* byte = (uint8_t*)&v;
-        std::cout << (int)byte[7] << "." << (int)byte[6] << "." << (int)byte[5] << "." << (int)byte[4]
-                                  << "." << (int)byte[3] << "." << (int)byte[2] << "." << (int)byte[1]
-                                  << "." << (int)byte[0] << std::endl;
-    }
+    std::reverse_iterator<uint8_t*> rfirst((uint8_t*)&v + sizeof(T));
+    std::reverse_iterator<uint8_t*> rend((uint8_t*)&v);
+    std::for_each(rfirst, rend, [](uint8_t& vv){
+        std::cout << (int)vv << ".";
+    });
+    std::cout << std::endl;
 }
 
-template<typename T>
-typename std::enable_if<std::is_same<decltype(std::declval<T>().length()), std::string>::value, void>
-print_ip(T v) {
+template<typename T, decltype (std::is_same_v<decltype(std::declval<T>().length()), T>) = 0>
+void print_ip(T v) {
     std::cout << v.c_str() << std::endl;
 }
 
@@ -42,16 +29,7 @@ void print (const std::tuple<T...>& _tup)
 }
 
 template<typename T>
-typename std::enable_if<is_vector<T>::value, void>::type print_ip(T t)
-{
-    std::for_each(t.begin(), t.end(), [&](auto&& elem) {
-       std::cout <<elem << ".";
-     } );
-    std::cout << std::endl;
-}
-
-template<typename T>
-typename std::enable_if<is_list<T>::value, void>::type print_ip(T t)
+typename std::enable_if<is_vector<T>::value || is_list<T>::value, void>::type print_ip(T t)
 {
     std::for_each(t.begin(), t.end(), [&](auto&& elem) {
        std::cout <<elem << ".";
